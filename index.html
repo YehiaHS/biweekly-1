@@ -1,0 +1,832 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Week 17-24 Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #09090b;
+      --bg-slide: #18181b;
+      --ink: #f4f4f5;
+      --muted: #a1a1aa;
+      --accent: #ccff00;
+      --accent-dark: #1a2e05;
+      --line: #3f3f46;
+      --radius: 0px;
+      --shadow: 6px 6px 0px var(--accent);
+      --dur-fast: 150ms;
+      --dur-mid: 300ms;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family: "JetBrains Mono", monospace;
+      background: var(--bg);
+      color: var(--ink);
+    }
+
+    body {
+      overflow-x: hidden;
+      background-image: radial-gradient(var(--line) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+
+    .app-shell {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: clamp(16px, 3vw, 34px);
+      display: grid;
+      gap: 24px;
+    }
+
+    .status-bar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
+      background: var(--bg-slide);
+      border: 2px solid var(--line);
+      padding: 12px 16px;
+    }
+
+    .progress-track {
+      position: relative;
+      height: 12px;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 0;
+      background: var(--accent);
+      transition: width var(--dur-mid) cubic-bezier(0.87, 0, 0.13, 1);
+    }
+
+    .timer-pill {
+      padding: 6px 12px;
+      background: var(--accent);
+      color: var(--bg);
+      font-weight: 800;
+      font-size: 0.9rem;
+      letter-spacing: 0.05em;
+      border: 2px solid var(--accent);
+      text-transform: uppercase;
+    }
+
+    .slide {
+      background: var(--bg-slide);
+      border: 2px solid var(--line);
+      min-height: 70vh;
+      padding: clamp(24px, 4vw, 48px);
+      position: relative;
+      animation: reveal var(--dur-mid) cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes reveal {
+      0% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.99);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .kicker {
+      font-size: 0.85rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 0 0 16px 0;
+      font-weight: 800;
+      display: inline-block;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 4px;
+    }
+
+    .title {
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: clamp(2.5rem, 6vw, 5.5rem);
+      font-weight: 800;
+      line-height: 0.95;
+      text-transform: uppercase;
+      margin: 0 0 24px;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+    }
+
+    .subtitle {
+      font-family: "JetBrains Mono", monospace;
+      color: var(--muted);
+      max-width: 60ch;
+      margin: 0;
+      font-size: clamp(1rem, 1.4vw, 1.25rem);
+      line-height: 1.6;
+    }
+
+    .grid {
+      display: grid;
+      gap: 24px;
+    }
+
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .card {
+      background: var(--bg);
+      border: 2px solid var(--line);
+      padding: 24px;
+      transition: all var(--dur-fast) ease;
+    }
+
+    .card:hover {
+      border-color: var(--accent);
+      box-shadow: var(--shadow);
+      transform: translate(-4px, -4px);
+    }
+
+    .card h3,
+    .card h4 {
+      margin: 0 0 16px;
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: clamp(1.4rem, 2.5vw, 2rem);
+      line-height: 1.1;
+      color: var(--ink);
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 32px;
+    }
+
+    .chip {
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 8px 16px;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      background: var(--accent-dark);
+      font-weight: 600;
+    }
+
+    .metric {
+      display: grid;
+      gap: 8px;
+    }
+
+    .metric .value {
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: clamp(3rem, 5vw, 4.5rem);
+      font-weight: 800;
+      line-height: 0.9;
+      color: var(--accent);
+    }
+
+    .metric strong {
+      font-size: 1.1rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-top: 8px;
+    }
+
+    ul.tight {
+      margin: 0;
+      padding-left: 20px;
+      display: grid;
+      gap: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 0.95rem;
+    }
+
+    ul.tight li {
+      padding-left: 4px;
+    }
+
+    ul.tight li::marker {
+      color: var(--accent);
+    }
+
+    .timeline {
+      display: grid;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 16px;
+      align-items: start;
+      padding: 16px;
+      border: 1px solid var(--line);
+      background: var(--bg);
+      transition: border-color var(--dur-fast);
+    }
+
+    .timeline-item:hover {
+      border-color: var(--muted);
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      margin-top: 6px;
+      background: var(--accent);
+      position: relative;
+    }
+
+    .timeline-item strong {
+      display: block;
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      color: var(--ink);
+      letter-spacing: 0.02em;
+    }
+
+    .timeline-item p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .video-grid {
+      display: grid;
+      gap: 20px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-top: 24px;
+    }
+
+    .video-card {
+      border: 1px solid var(--line);
+      background: var(--bg);
+      padding: 16px;
+      transition: all var(--dur-fast);
+    }
+
+    .video-card:hover {
+      border-color: var(--accent);
+    }
+
+    .video-card h4 {
+      margin: 0 0 12px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+    }
+
+    video {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      border: 1px solid var(--line);
+      filter: grayscale(0.2) contrast(1.1);
+      transition: filter var(--dur-fast);
+    }
+
+    video:hover {
+      filter: grayscale(0) contrast(1);
+    }
+
+    .drive-tools {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 16px;
+      margin: 24px 0 24px;
+    }
+
+    .drive-tools input {
+      border: 2px solid var(--line);
+      padding: 12px 16px;
+      font-family: "JetBrains Mono", monospace;
+      background: var(--bg);
+      color: var(--ink);
+      outline: none;
+      transition: border-color var(--dur-fast);
+    }
+
+    .drive-tools input:focus {
+      border-color: var(--accent);
+    }
+
+    button,
+    .button-link {
+      border: 2px solid var(--line);
+      padding: 12px 20px;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--dur-fast) ease;
+    }
+
+    button:hover:not(:disabled),
+    .button-link:hover {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+      transform: translate(-2px, -2px);
+      box-shadow: 4px 4px 0px var(--line);
+    }
+
+    .drive-embed {
+      width: 100%;
+      height: clamp(240px, 40vh, 400px);
+      border: 2px solid var(--line);
+      background: var(--bg);
+      filter: invert(1) hue-rotate(180deg);
+    }
+
+    .muted {
+      color: var(--muted);
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .nav {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 24px;
+      background: var(--bg-slide);
+      border: 2px solid var(--line);
+      padding: 16px;
+    }
+
+    .nav-center {
+      text-align: center;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.95rem;
+      color: var(--muted);
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .nav button:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 900px) {
+      .grid.two,
+      .grid.three,
+      .video-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .slide {
+        min-height: auto;
+        padding: 24px;
+      }
+
+      .drive-tools {
+        grid-template-columns: 1fr;
+      }
+
+      .nav {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .nav-center {
+        grid-column: 1 / -1;
+        order: -1;
+      }
+    }
+  </style>
+</head>
+<body class="grain">
+  <div id="root"></div>
+
+  <script type="module">
+    import React, { useEffect, useMemo, useState } from "https://esm.sh/react@18.3.1";
+    import { createRoot } from "https://esm.sh/react-dom@18.3.1/client";
+    import htm from "https://esm.sh/htm@3.1.1";
+
+    const html = htm.bind(React.createElement);
+
+    const weeks = [
+      {
+        week: 17,
+        period: "21-26 Feb 2026",
+        hours: 3,
+        doing: "Kept the workflow moving during quiet weeks",
+        learned: "Stay consistent when things slow down",
+        improve: "Update the team while waiting for approvals"
+      },
+      {
+        week: 18,
+        period: "28 Feb-5 Mar 2026",
+        hours: 3,
+        doing: "Pitched new ideas after week one of Ramadan",
+        learned: "Event access limits break plans",
+        improve: "Check registrations early and prep backup content"
+      },
+      {
+        week: 19,
+        period: "7-12 Mar 2026",
+        hours: 3,
+        doing: "Kept planning responsive",
+        learned: "Ship smaller scopes faster",
+        improve: "Focus on one published piece per week"
+      },
+      {
+        week: 20,
+        period: "14-19 Mar 2026",
+        hours: 2,
+        doing: "Kept talking to the team over Eid",
+        learned: "Talking during breaks makes restarting easier",
+        improve: "Reset team roles right after breaks"
+      },
+      {
+        week: 21,
+        period: "21-26 Mar 2026",
+        hours: 2,
+        doing: "Adjusted to tighter performance monitoring",
+        learned: "Visible work equals performance",
+        improve: "Link proof to every weekly update"
+      },
+      {
+        week: 22,
+        period: "28 Mar-2 Apr 2026",
+        hours: 3,
+        doing: "Navigated planning issues and a faculty pause",
+        learned: "Outside decisions stop work instantly",
+        improve: "Package paused tasks into ready-to-go briefs"
+      },
+      {
+        week: 23,
+        period: "4-9 Apr 2026",
+        hours: 6,
+        doing: "Joined SM Industry and shot event recaps",
+        learned: "Adapting fast saves momentum",
+        improve: "Submit files in labeled folders"
+      },
+      {
+        week: 24,
+        period: "11-16 Apr 2026",
+        hours: 5,
+        doing: "Planned the run shoot and pitched three content ideas",
+        learned: "Planning a week out sharpens the shoot",
+        improve: "Deliver the first cut within 24 hours"
+      }
+    ];
+
+    const week23Videos = [
+      {
+        label: "Masterclass Recap v1",
+        src: "Hisham_Soliman_Amr_Koura_Masterclass_TikTok_Recap_v1.mp4"
+      },
+      {
+        label: "Masterclass Recap v2 Long",
+        src: "Hisham_Soliman_Amr_Koura_Masterclass_TikTok_Recap_v2_LONG.mp4"
+      },
+      {
+        label: "Lina Sofia Recap v1",
+        src: "Lina_Sofia_TikTok_Recap_Stylish_v1.mp4"
+      },
+      {
+        label: "Lina Sofia Recap v2 Long",
+        src: "Lina_Sofia_TikTok_Recap_Stylish_v2_LONG.mp4"
+      }
+    ];
+
+    const driveSourceUrl = "https://drive.google.com/drive/folders/168FfG7xOKQQrY6Mei916_ZTk9QFS35Qo?usp=sharing";
+
+    const driveSnapshot = [
+      "Final Outputs Portfolio",
+      "Logbooks",
+      "Mid-Year Presentation",
+      "Supporting Documentation"
+    ];
+
+    function extractDriveFolderId(input) {
+      const folderPathMatch = input.match(/\/folders\/([a-zA-Z0-9_-]+)/);
+      if (folderPathMatch && folderPathMatch[1]) {
+        return folderPathMatch[1];
+      }
+
+      try {
+        const parsed = new URL(input);
+        const idParam = parsed.searchParams.get("id");
+        return idParam || "";
+      } catch {
+        return "";
+      }
+    }
+
+    function minuteTimer(totalSeconds) {
+      const min = Math.floor(totalSeconds / 60).toString().padStart(2, "0");
+      const sec = (totalSeconds % 60).toString().padStart(2, "0");
+      return `${min}:${sec}`;
+    }
+
+    function App() {
+      const [index, setIndex] = useState(0);
+      const [remainingSeconds, setRemainingSeconds] = useState(300);
+      const [hasStarted, setHasStarted] = useState(false);
+      const [driveUrl, setDriveUrl] = useState(driveSourceUrl);
+      const [driveId, setDriveId] = useState(extractDriveFolderId(driveSourceUrl));
+
+      const totalHours = useMemo(() => weeks.reduce((sum, w) => sum + w.hours, 0), []);
+      const slidesCount = 7;
+      const progress = ((index + 1) / slidesCount) * 100;
+
+      useEffect(() => {
+        const handleFirstClick = () => {
+          setHasStarted(true);
+        };
+        document.addEventListener("click", handleFirstClick, { once: true });
+        return () => document.removeEventListener("click", handleFirstClick);
+      }, []);
+
+      useEffect(() => {
+        if (!hasStarted) return;
+        const timer = setInterval(() => {
+          setRemainingSeconds((old) => (old > 0 ? old - 1 : 0));
+        }, 1000);
+        return () => clearInterval(timer);
+      }, [hasStarted]);
+
+      useEffect(() => {
+        const onKey = (event) => {
+          if (event.key === "ArrowRight") {
+            setIndex((old) => Math.min(slidesCount - 1, old + 1));
+          }
+          if (event.key === "ArrowLeft") {
+            setIndex((old) => Math.max(0, old - 1));
+          }
+        };
+
+        window.addEventListener("keydown", onKey);
+        return () => window.removeEventListener("keydown", onKey);
+      }, []);
+
+      const quickWins = [
+        "Kept moving during quiet weeks",
+        "Bounced back fast after the pause",
+        "Shipped new recaps on time"
+      ];
+
+      const majorLearning = [
+        "Checking access first saves time",
+        "Showing your work builds trust",
+        "Good planning makes editing easy"
+      ];
+
+      const improvementPlan = [
+        "Lock logistics before planning the shoot",
+        "Send proof of work every week",
+        "Deliver first cuts within 24 hours"
+      ];
+
+      const renderSlide = () => {
+        if (index === 0) {
+          return html`
+            <section className="slide">
+              <p className="kicker">Industry FYP Recap</p>
+              <h1 className="title">Week 17 to Week 24 in five minutes</h1>
+              <p className="subtitle">
+                What I did, what I learned, and how I can improve.
+                Covers the quiet weeks, the workflow pause, and the new event recaps.
+              </p>
+              <div className="grid three" style=${{ marginTop: "24px" }}>
+                <article className="card metric">
+                  <span className="value">${totalHours}</span>
+                  <strong>Total hours</strong>
+                  <span className="muted">Across week 17 to week 24</span>
+                </article>
+                <article className="card metric">
+                  <span className="value">4</span>
+                  <strong>Recap videos</strong>
+                  <span className="muted">Masterclass and Lina event versions</span>
+                </article>
+                <article className="card metric">
+                  <span className="value">2</span>
+                  <strong>Workflow shifts</strong>
+                  <span className="muted">Ramadan pacing and SM Industry transition</span>
+                </article>
+              </div>
+            </section>
+          `;
+        }
+
+        if (index === 1) {
+          return html`
+            <section className="slide">
+              <p className="kicker">Timeline</p>
+              <h2 className="title">What I did each week</h2>
+              <div className="timeline">
+                ${weeks.map((item) => html`
+                  <div className="timeline-item" key=${item.week}>
+                    <span className="dot"></span>
+                    <div>
+                      <strong>Week ${item.week} · ${item.period} · ${item.hours}h</strong>
+                      <p>${item.doing}</p>
+                    </div>
+                  </div>
+                `)}
+              </div>
+            </section>
+          `;
+        }
+
+        if (index === 2) {
+          return html`
+            <section className="slide">
+              <p className="kicker">Learning Arc</p>
+              <h2 className="title">What changed from week 17 to week 22</h2>
+              <div className="grid two" style=${{ marginTop: "12px" }}>
+                <article className="card">
+                  <h3>Working reality</h3>
+                  <ul className="tight">
+                    <li>Process discipline matters even on quiet weeks</li>
+                    <li>Ramadan forced smaller scopes and realistic pacing</li>
+                    <li>Tracked contributions build trust under monitoring</li>
+                    <li>The faculty pause forced cleaner documentation</li>
+                  </ul>
+                </article>
+                <article className="card">
+                  <h3>Main lessons</h3>
+                  <ul className="tight">
+                    ${majorLearning.map((line) => html`<li key=${line}>${line}</li>`)}
+                  </ul>
+                </article>
+              </div>
+            </section>
+          `;
+        }
+
+        if (index === 3) {
+          return html`
+            <section className="slide">
+              <p className="kicker">Week 23 Output</p>
+              <h2 className="title">Event recap videos</h2>
+              <p className="subtitle">
+                This is the output from my first week with the SM Industry group.
+              </p>
+              <div className="video-grid">
+                ${week23Videos.map((video) => html`
+                  <article className="video-card" key=${video.src}>
+                    <h4>${video.label}</h4>
+                    <video controls preload="metadata" src=${video.src}></video>
+                  </article>
+                `)}
+              </div>
+            </section>
+          `;
+        }
+
+        if (index === 4) {
+          return html`
+            <section className="slide">
+              <p className="kicker">Drive Access</p>
+              <h2 className="title">Project Portfolio Folders</h2>
+              <p className="subtitle">
+                A live view into the weekly logbooks and presentation assets.
+              </p>
+
+              <div className="drive-tools">
+                <input
+                  type="text"
+                  value=${driveUrl}
+                  onInput=${(event) => setDriveUrl(event.target.value)}
+                  placeholder="Paste Google Drive folder URL"
+                />
+                <button onClick=${() => setDriveId(extractDriveFolderId(driveUrl))}>Load Folder</button>
+                <a className="button-link" href=${driveUrl} target="_blank" rel="noreferrer">Open in Drive</a>
+              </div>
+
+              <div className="grid two">
+                <article className="card">
+                  <h3>Folder contents</h3>
+                  <ul className="tight">
+                    ${driveSnapshot.map((name) => html`<li key=${name}>${name}</li>`)}
+                  </ul>
+                </article>
+                <article className="card">
+                  ${driveId
+                    ? html`<iframe
+                        className="drive-embed"
+                        title="Drive folder"
+                        src=${`https://drive.google.com/embeddedfolderview?id=${driveId}#list`}
+                      ></iframe>`
+                    : html`<p className="muted">Folder access requires a valid link.</p>`}
+                </article>
+              </div>
+            </section>
+          `;
+        }
+
+        if (index === 5) {
+          return html`
+            <section className="slide">
+              <p className="kicker">Reflection</p>
+              <h2 className="title">What I learned</h2>
+              <div className="grid two">
+                <article className="card">
+                  <h3>Strong points</h3>
+                  <ul className="tight">
+                    ${quickWins.map((line) => html`<li key=${line}>${line}</li>`)}
+                  </ul>
+                </article>
+                <article className="card">
+                  <h3>Week 24 focus</h3>
+                  <ul className="tight">
+                    <li>Prepped the April 17 run coverage</li>
+                    <li>Built out the carousel, reel, and TikTok pipeline</li>
+                    <li>Got back into pre-production habits</li>
+                  </ul>
+                </article>
+              </div>
+            </section>
+          `;
+        }
+
+        return html`
+          <section className="slide">
+            <p className="kicker">Next Step</p>
+            <h2 className="title">Where I can improve</h2>
+            <div className="grid two">
+              <article className="card">
+                <h3>Improvement plan</h3>
+                <ul className="tight">
+                  ${improvementPlan.map((line) => html`<li key=${line}>${line}</li>`)}
+                </ul>
+              </article>
+              <article className="card">
+                <h3>My commitment for upcoming weeks</h3>
+                <ul className="tight">
+                  <li>Ship one clear output a week with proof</li>
+                  <li>Always prep a fallback idea</li>
+                  <li>Run a quick review after every shoot</li>
+                </ul>
+              </article>
+            </div>
+            <p className="subtitle" style=${{ marginTop: "16px" }}>
+              I learned to stay consistent and adapt under real production constraints.
+            </p>
+          </section>
+        `;
+      };
+
+      return html`
+        <main className="app-shell">
+          <header className="status-bar">
+            <div className="progress-track">
+              <span className="progress-fill" style=${{ width: `${progress}%` }}></span>
+            </div>
+            <span className="timer-pill">${minuteTimer(remainingSeconds)} left</span>
+          </header>
+
+          ${renderSlide()}
+
+          <footer className="nav">
+            <button onClick=${() => setIndex((old) => Math.max(0, old - 1))} disabled=${index === 0}>Previous</button>
+            <div className="nav-center">Slide ${index + 1} of ${slidesCount}</div>
+            <button onClick=${() => setIndex((old) => Math.min(slidesCount - 1, old + 1))} disabled=${index === slidesCount - 1}>Next</button>
+          </footer>
+        </main>
+      `;
+    }
+
+    createRoot(document.getElementById("root")).render(html`<${App} />`);
+  </script>
+</body>
+</html>
